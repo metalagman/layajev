@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "repository": "NandhaKishorM/laya",
+  "revision": "573e5b62696ba441230cd6be71d593331b5d23af",
+  "version": "0.3.5",
+  "archive_sha256": "03931635a92b7609c6c253ac1d4d618ebe4fc54956744db01c027b504fd9c426",
+  "semantic_source_files": [
+    {
+      "path": "LICENSE",
+      "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+    },
+    {
+      "path": "laya/__init__.py",
+      "sha256": "43e8c7d02969b37381915850cb4970e62b6ea0a328ac26c1efc9fb3fca0916d7"
+    },
+    {
+      "path": "laya/agent.py",
+      "sha256": "128567096446c5d39af8e4a3a7c4dd9e32a134a1b099ce5a5eed383beeff1b89"
+    },
+    {
+      "path": "laya/common.py",
+      "sha256": "f231d42fcec84da203222fcaa89c083b22776e00341e66e118183d754e1dcabf"
+    }
+  ]
+}

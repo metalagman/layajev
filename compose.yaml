@@ -1,0 +1,18 @@
+services:
+  layajev:
+    image: layajev:local
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    stop_grace_period: 60s

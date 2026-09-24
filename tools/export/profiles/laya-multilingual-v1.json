@@ -1,0 +1,108 @@
+{
+  "profile_version": 1,
+  "id": "laya-multilingual-v1",
+  "source_model": {
+    "id": "convaiinnovations/laya-multilingual",
+    "revision": "052592a15d198d9ad47da779604259b10b47b7aa",
+    "license": "Apache-2.0"
+  },
+  "reference_sdk": {
+    "repository": "NandhaKishorM/laya",
+    "revision": "573e5b62696ba441230cd6be71d593331b5d23af",
+    "version": "0.3.5",
+    "license": "Apache-2.0"
+  },
+  "bundle_licenses": [
+    {
+      "component": "source-model",
+      "spdx": "Apache-2.0",
+      "license_path": "LICENSE.model",
+      "notice_path": "NOTICE.model"
+    },
+    {
+      "component": "sdk-derived-exporter-code",
+      "spdx": "Apache-2.0",
+      "license_path": "LICENSE.sdk",
+      "notice_path": "NOTICE.sdk"
+    }
+  ],
+  "source_files": [
+    {
+      "path": ".gitattributes",
+      "size": 1580,
+      "sha256": "caf3ca02d5e883f643e939cbed54f94237f94c171797f0dfea5e25c7e33315b3"
+    },
+    {
+      "path": "README.md",
+      "size": 6957,
+      "sha256": "8a8a77d006d07a1a1ee1f964d83b4de935dee354a3e6f371c044b4a3b4c4ef70"
+    },
+    {
+      "path": "encoder/config.json",
+      "size": 1938,
+      "sha256": "83f6916d13ef0f556ac461f28308dc2bffa7ebeadee8ec9e2db5812020ea5bb4"
+    },
+    {
+      "path": "model.safetensors",
+      "size": 643835514,
+      "sha256": "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204"
+    },
+    {
+      "path": "rl_agent_config.json",
+      "size": 472,
+      "sha256": "25061739243b617ad88d1219ba6f8a9c86c5881ca28df024fa2d9b3b2fcc30c6"
+    },
+    {
+      "path": "tokenizer/tokenizer.json",
+      "size": 34363188,
+      "sha256": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f"
+    },
+    {
+      "path": "tokenizer/tokenizer_config.json",
+      "size": 502,
+      "sha256": "424b69444bf7b5809dc2cd2e36d0bd71b8055124dd24274d6db3c655d38205e7"
+    }
+  ],
+  "architecture": {
+    "id": "laya-mmbert-system-one-v1",
+    "encoder": "jhu-clsp/mmBERT-base",
+    "parameters": 321908998,
+    "checkpoint_format": "safetensors",
+    "allow_pickle": false,
+    "allow_checkpoint_code": false,
+    "allow_remote_code": false
+  },
+  "special_tokens": {
+    "cls": "<bos>",
+    "sep": "<eos>",
+    "mask": "<mask>",
+    "pad": "<pad>",
+    "unk": "<unk>"
+  },
+  "preprocessing": {
+    "version": 1,
+    "max_len": 1024,
+    "head_max_len": 256,
+    "option_max_len": 48,
+    "head_reserve": 16,
+    "truncation_side": "right",
+    "qtypes": {"choice": 0, "score": 1, "noul": 2}
+  },
+  "export": {
+    "format": "onnx",
+    "opset": 18,
+    "precision": "fp32",
+    "execution_provider": "CPUExecutionProvider",
+    "inputs": [
+      {"name": "input_ids", "dtype": "int64", "dimensions": ["batch", "sequence"]},
+      {"name": "attention_mask", "dtype": "int64", "dimensions": ["batch", "sequence"]},
+      {"name": "marker_pos", "dtype": "int64", "dimensions": ["batch", "markers"]},
+      {"name": "marker_mask", "dtype": "bool", "dimensions": ["batch", "markers"]},
+      {"name": "qtype", "dtype": "int64", "dimensions": ["batch"]}
+    ],
+    "outputs": [
+      {"name": "logits", "dtype": "float32", "dimensions": ["batch", "markers"]},
+      {"name": "act_logits", "dtype": "float32", "dimensions": ["batch", "actions"]}
+    ]
+  }
+}

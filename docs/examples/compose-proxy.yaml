@@ -1,0 +1,27 @@
+# Use only with an already configured TLS/authenticating reverse proxy on
+# the external layajev-ingress network. No host port is published here.
+services:
+  layajev:
+    image: layajev:local
+    platform: linux/amd64
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - "8080"
+    networks:
+      - ingress
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+networks:
+  ingress:
+    external: true
+    name: layajev-ingress

@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:metalagman:laya-go:bundle-manifest:v1",
+  "title": "Laya Go Bundle Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle",
+    "provenance",
+    "preprocessing",
+    "model",
+    "tokenizer",
+    "calibration",
+    "runtime",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "bundle": {"$ref": "#/$defs/bundle"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "preprocessing": {"$ref": "#/$defs/preprocessing"},
+    "model": {"$ref": "#/$defs/model"},
+    "tokenizer": {"$ref": "#/$defs/tokenizer"},
+    "calibration": {"$ref": "#/$defs/calibration"},
+    "runtime": {"$ref": "#/$defs/runtime"},
+    "files": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 256,
+      "items": {"$ref": "#/$defs/file"}
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^(?!\\.{1,2}(?:/|$))(?!.*[/]\\.{1,2}(?:/|$))(?!.*\\\\)(?!.*//)[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$"
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "version": {"$ref": "#/$defs/version"}
+      }
+    },
+    "source_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "sdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "version"],
+      "properties": {
+        "repository": {"$ref": "#/$defs/identifier"},
+        "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "version": {"$ref": "#/$defs/version"}
+      }
+    },
+    "profile_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "exporter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_sha256", "git_revision"],
+      "properties": {
+        "name": {"const": "laya-go-export"},
+        "version": {"$ref": "#/$defs/version"},
+        "source_sha256": {"$ref": "#/$defs/sha256"},
+        "git_revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"const": "tools/export/uv.lock"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "spdx", "path"],
+      "properties": {
+        "component": {"$ref": "#/$defs/identifier"},
+        "spdx": {"const": "Apache-2.0"},
+        "path": {"$ref": "#/$defs/path"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_model",
+        "sdk",
+        "profile",
+        "exporter",
+        "lock",
+        "created_at",
+        "source_date_epoch",
+        "redistribution",
+        "licenses"
+      ],
+      "properties": {
+        "source_model": {"$ref": "#/$defs/source_model"},
+        "sdk": {"$ref": "#/$defs/sdk"},
+        "profile": {"$ref": "#/$defs/profile_identity"},
+        "exporter": {"$ref": "#/$defs/exporter"},
+        "lock": {"$ref": "#/$defs/lock"},
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_date_epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "redistribution": {
+          "enum": ["review-required", "approved"]
+        },
+        "licenses": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "items": {"$ref": "#/$defs/license"}
+        }
+      }
+    },
+    "qtypes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["choice", "score", "noul"],
+      "properties": {
+        "choice": {"const": 0},
+        "score": {"const": 1},
+        "noul": {"const": 2}
+      }
+    },
+    "preprocessing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "max_len",
+        "head_max_len",
+        "option_max_len",
+        "head_reserve",
+        "truncation_side",
+        "qtypes"
+      ],
+      "properties": {
+        "version": {"const": 1},
+        "max_len": {"type": "integer", "minimum": 4, "maximum": 1048576},
+        "head_max_len": {"type": "integer", "minimum": 4, "maximum": 1048576},
+        "option_max_len": {"const": 48},
+        "head_reserve": {"const": 16},
+        "truncation_side": {"const": "right"},
+        "qtypes": {"$ref": "#/$defs/qtypes"}
+      }
+    },
+    "input_ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "input_ids"},
+        "dtype": {"const": "int64"},
+        "dimensions": {"const": ["batch", "sequence"]}
+      }
+    },
+    "attention_mask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "attention_mask"},
+        "dtype": {"const": "int64"},
+        "dimensions": {"const": ["batch", "sequence"]}
+      }
+    },
+    "marker_pos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "marker_pos"},
+        "dtype": {"const": "int64"},
+        "dimensions": {"const": ["batch", "markers"]}
+      }
+    },
+    "marker_mask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "marker_mask"},
+        "dtype": {"const": "bool"},
+        "dimensions": {"const": ["batch", "markers"]}
+      }
+    },
+    "qtype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "qtype"},
+        "dtype": {"const": "int64"},
+        "dimensions": {"const": ["batch"]}
+      }
+    },
+    "logits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "logits"},
+        "dtype": {"const": "float32"},
+        "dimensions": {"const": ["batch", "markers"]}
+      }
+    },
+    "act_logits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "dtype", "dimensions"],
+      "properties": {
+        "name": {"const": "act_logits"},
+        "dtype": {"const": "float32"},
+        "dimensions": {"const": ["batch", "actions"]}
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "format", "opset", "precision", "external_data", "inputs", "outputs"],
+      "properties": {
+        "path": {"const": "model.onnx"},
+        "format": {"const": "onnx"},
+        "opset": {"const": 18},
+        "precision": {"const": "fp32"},
+        "external_data": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {"$ref": "#/$defs/path"}
+        },
+        "inputs": {
+          "type": "array",
+          "prefixItems": [
+            {"$ref": "#/$defs/input_ids"},
+            {"$ref": "#/$defs/attention_mask"},
+            {"$ref": "#/$defs/marker_pos"},
+            {"$ref": "#/$defs/marker_mask"},
+            {"$ref": "#/$defs/qtype"}
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "outputs": {
+          "type": "array",
+          "prefixItems": [
+            {"$ref": "#/$defs/logits"},
+            {"$ref": "#/$defs/act_logits"}
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "special_tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cls", "sep", "mask", "pad"],
+      "properties": {
+        "cls": {"type": "integer", "minimum": 0},
+        "sep": {"type": "integer", "minimum": 0},
+        "mask": {"type": "integer", "minimum": 0},
+        "pad": {"type": "integer", "minimum": 0}
+      }
+    },
+    "tokenizer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["json_path", "config_path", "special_tokens"],
+      "properties": {
+        "json_path": {"const": "tokenizer/tokenizer.json"},
+        "config_path": {"const": "tokenizer/tokenizer_config.json"},
+        "special_tokens": {"$ref": "#/$defs/special_tokens"}
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "id"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0, "maximum": 31},
+        "id": {"$ref": "#/$defs/identifier"}
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "config_path",
+        "temperature_min",
+        "temperature_max",
+        "invalid_temperature",
+        "selection_order",
+        "actions"
+      ],
+      "properties": {
+        "config_path": {"const": "rl_agent_config.json"},
+        "temperature_min": {"const": 0.5},
+        "temperature_max": {"const": 5.0},
+        "invalid_temperature": {"const": 1.0},
+        "selection_order": {"const": ["option_bucket", "qtype", "default"]},
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {"$ref": "#/$defs/action"}
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine", "minimum_version", "maximum_exclusive", "execution_providers"],
+      "properties": {
+        "engine": {"const": "onnxruntime"},
+        "minimum_version": {"$ref": "#/$defs/version"},
+        "maximum_exclusive": {"const": "2.0.0"},
+        "execution_providers": {"const": ["CPUExecutionProvider"]}
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "path", "size", "sha256"],
+      "properties": {
+        "role": {
+          "enum": [
+            "model",
+            "model-external-data",
+            "tokenizer",
+            "tokenizer-config",
+            "agent-config",
+            "license",
+            "notice"
+          ]
+        },
+        "path": {"$ref": "#/$defs/path"},
+        "size": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

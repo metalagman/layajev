@@ -1,0 +1,189 @@
+# Omnidist tag release with repository-specific native build and smoke steps.
+# The tag is the sole version source; npm publication uses trusted OIDC.
+name: layajev npm release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: layajev-npm-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  stage-linux-amd64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GOTOOLCHAIN: local
+      CGO_ENABLED: "1"
+      TOKENIZERS_URL: https://github.com/daulet/tokenizers/releases/download/v1.27.0/libtokenizers.linux-amd64.tar.gz
+      ONNXRUNTIME_URL: https://github.com/microsoft/onnxruntime/releases/download/v1.29.0/onnxruntime-linux-x64-1.29.0.tgz
+    steps:
+      - name: Check out exact release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Validate release tag and source commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "npm release requires a stable vMAJOR.MINOR.PATCH tag" >&2
+            exit 1
+          fi
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+            echo "Release tag must point to the current main commit" >&2
+            exit 1
+          fi
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Acquire verified build-time tokenizer archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_dir="$RUNNER_TEMP/layajev-native"
+          mkdir -m 700 "$native_dir"
+          curl --fail --silent --show-error --location --retry 3 --proto '=https' --proto-redir '=https' \
+            --output "$native_dir/tokenizers.tar.gz" "$TOKENIZERS_URL"
+          echo "72556cdca798dd4ea7cdaba308e5f0d68a8cb93b67c96edf485b7a0edd7b07f4  $native_dir/tokenizers.tar.gz" | sha256sum --check --status
+          tar -xzf "$native_dir/tokenizers.tar.gz" -C "$native_dir" libtokenizers.a
+          echo "e6862b31745bb7d07980fcee70e49cd3b4318097609180f5d2d3fb394f305d50  $native_dir/libtokenizers.a" | sha256sum --check --status
+          echo "CGO_LDFLAGS=-L$native_dir" >> "$GITHUB_ENV"
+
+      - name: Acquire verified packaged ONNX Runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          runtime_dir="$RUNNER_TEMP/layajev-onnxruntime"
+          mkdir -m 700 "$runtime_dir"
+          curl --fail --silent --show-error --location --retry 3 --proto '=https' --proto-redir '=https' \
+            --output "$runtime_dir/onnxruntime.tgz" "$ONNXRUNTIME_URL"
+          echo "c3fddc4f139a045b0c4902c57410f0694f1c2fdf9b6939fbe38b1aeae7cd14ba  $runtime_dir/onnxruntime.tgz" | sha256sum --check --status
+          tar -xzf "$runtime_dir/onnxruntime.tgz" -C "$runtime_dir"
+          echo "LAYA_ONNXRUNTIME_DISTRIBUTION=$runtime_dir/onnxruntime-linux-x64-1.29.0" >> "$GITHUB_ENV"
+
+      - name: Build, stage, and verify npm packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          go install github.com/go-task/task/v3/cmd/task@v3.53.1
+          npx -y @omnidist/omnidist@0.1.37 build
+          npx -y @omnidist/omnidist@0.1.37 stage
+          export OMNIDIST_VERSION="$(cat .omnidist/default/dist/VERSION)"
+          test "$OMNIDIST_VERSION" = "${GITHUB_REF_NAME#v}"
+          task package:npm-native
+          npx -y @omnidist/omnidist@0.1.37 verify
+          task package:npm-smoke
+          npm pack --dry-run --json .omnidist/default/npm/@metalagman/layajev-linux-x64 \
+            | jq -e '.[0].files | map(.path) | index("bin/libonnxruntime.so.1.29.0") != null and index("bin/LICENSE.onnxruntime") != null and index("bin/ThirdPartyNotices.onnxruntime.txt") != null'
+          test "$(find .omnidist/default/dist/linux -mindepth 1 -maxdepth 1 -type d -printf '%f\n')" = amd64
+          test "$(cat .omnidist/default/dist/VERSION)" = "${GITHUB_REF_NAME#v}"
+          .omnidist/default/dist/linux/amd64/layajev --help >/dev/null
+
+      - name: Upload reviewed npm packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: layajev-npm-linux-amd64-${{ github.ref_name }}
+          path: .omnidist/default/npm/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Archive exact staged candidate for trusted publication
+        shell: bash
+        run: tar -czf "$RUNNER_TEMP/layajev-staged.tgz" .omnidist/default
+
+      - name: Upload exact staged candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: layajev-publish-${{ github.ref_name }}
+          path: ${{ runner.temp }}/layajev-staged.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-npm:
+    needs: stage-linux-amd64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out reviewed configuration
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node for npm trusted publishing
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Restore verified candidate
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: layajev-publish-${{ github.ref_name }}
+
+      - name: Unpack verified candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf layajev-staged.tgz
+          version="${GITHUB_REF_NAME#v}"
+          test "$(cat .omnidist/default/dist/VERSION)" = "$version"
+          test "$(jq -r .version .omnidist/default/npm/@metalagman/layajev/package.json)" = "$version"
+          test "$(jq -r .version .omnidist/default/npm/@metalagman/layajev-linux-x64/package.json)" = "$version"
+
+      - name: Refuse an already-published package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          for package in @metalagman/layajev-linux-x64 @metalagman/layajev; do
+            npm view "$package" versions --json --prefer-online \
+              | jq -e --arg version "$version" 'index($version) == null'
+          done
+
+      - name: Publish with omnidist and trusted npm OIDC
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx -y @omnidist/omnidist@0.1.37 verify --only npm
+          npx -y @omnidist/omnidist@0.1.37 publish --dry-run --only npm
+          npx -y @omnidist/omnidist@0.1.37 npm publish
+
+      - name: Verify published install and native runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          for package in @metalagman/layajev-linux-x64 @metalagman/layajev; do
+            expected="$(npm pack --dry-run --json ".omnidist/default/npm/$package" | jq -r '.[0].shasum')"
+            actual=""
+            for attempt in {1..60}; do
+              if actual="$(npm view "$package@$version" dist.shasum --json --prefer-online 2>/dev/null | jq -r '.')"; then
+                break
+              fi
+              sleep 10
+            done
+            test "$actual" = "$expected"
+          done
+          env -u LAYA_ONNXRUNTIME_LIBRARY -u LAYA_TOKENIZERS_LIBRARY \
+            -u ORT_DISABLE_TELEMETRY npm_config_cache="$RUNNER_TEMP/layajev-clean-npx" \
+            npx -y "@metalagman/layajev@$version" doctor

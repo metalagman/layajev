@@ -1,0 +1,25 @@
+profiles:
+    default:
+        enabled-distributions: [npm]
+        tool:
+            name: layajev
+            main: ./cmd/layajev
+        version:
+            source: git-tag
+        targets:
+            - os: linux
+              arch: amd64
+        build:
+            ldflags: -s -w
+            tags: [laya_native]
+            cgo: true
+        distributions:
+            npm:
+                package: '@metalagman/layajev'
+                registry: https://registry.npmjs.org
+                access: public
+                publish-auth: trusted
+                repository-url: https://github.com/metalagman/layajev
+                license: MIT
+                readme-path: docs/layajev-npm-release.md
+                include-readme: true

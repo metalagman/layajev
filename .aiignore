@@ -1,0 +1,7 @@
+# Generated and local artifacts
+bin/
+.cache/
+.omnidist/default/
+*.exe
+*.log
+vendor/

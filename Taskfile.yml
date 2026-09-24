@@ -1,0 +1,130 @@
+version: "3"
+
+env:
+  GOCACHE: "{{.ROOT_DIR}}/.cache/go-build"
+  UV_CACHE_DIR: "{{.ROOT_DIR}}/.cache/uv"
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+
+  fmt:
+    cmds:
+      - test -z "$(gofmt -l .)"
+
+  tidy:
+    cmds:
+      - go mod tidy -diff
+
+  verify:
+    cmds:
+      - go mod verify
+      - go list ./...
+
+  test:
+    cmds:
+      - go test ./...
+
+  test:race:
+    cmds:
+      - go test -race ./...
+
+  lint:
+    cmds:
+      - go tool golangci-lint run ./...
+
+  vuln:
+    cmds:
+      - go tool govulncheck ./...
+
+  setup:native:
+    requires:
+      vars: [LAYA_ONNXRUNTIME_LIBRARY, LAYA_TOKENIZERS_LIBRARY, LAYA_BUNDLE_DIR]
+    cmds:
+      - bash scripts/verify-native-artifacts.sh
+      - task: bundle:verify
+
+  native:test:
+    deps: [setup:native]
+    cmds:
+      - go test -tags=laya_native ./internal/apps/layajev
+
+  reference:test:
+    env:
+      UV_PROJECT_ENVIRONMENT: "{{.ROOT_DIR}}/.cache/reference-venv"
+      UV_OFFLINE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: "{{.ROOT_DIR}}/tools/export/src"
+    cmds:
+      - uv run --project tools/export --offline --frozen --no-sync python -m unittest discover -s tools/export/tests -v
+
+  reference:verify-source:
+    requires:
+      vars: [LAYA_SOURCE_DIR]
+    env:
+      UV_PROJECT_ENVIRONMENT: "{{.ROOT_DIR}}/.cache/reference-venv"
+      UV_OFFLINE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: "{{.ROOT_DIR}}/tools/export/src"
+    cmds:
+      - uv run --project tools/export --offline --frozen --no-sync python -m laya_export.cli --profile tools/export/profiles/laya-multilingual-v1.json verify-source --source "${LAYA_SOURCE_DIR}"
+
+  bundle:export:
+    requires:
+      vars: [LAYA_SOURCE_DIR, LAYA_SDK_DIR, LAYA_BUNDLE_DIR, SOURCE_DATE_EPOCH]
+    env:
+      UV_PROJECT_ENVIRONMENT: "{{.ROOT_DIR}}/.cache/export-venv"
+      UV_OFFLINE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: "{{.ROOT_DIR}}/tools/export/src"
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      ORT_DISABLE_TELEMETRY: "1"
+    cmds:
+      - mkdir -p .cache
+      - go build -o .cache/bundlecheck ./internal/cmd/bundlecheck
+      - uv run --project tools/export --offline --frozen python -m laya_export.cli --profile tools/export/profiles/laya-multilingual-v1.json export --source "${LAYA_SOURCE_DIR}" --sdk "${LAYA_SDK_DIR}" --output "${LAYA_BUNDLE_DIR}" --epoch "${SOURCE_DATE_EPOCH}" --repository-root "{{.ROOT_DIR}}" --verifier "{{.ROOT_DIR}}/.cache/bundlecheck"
+
+  bundle:verify:
+    requires:
+      vars: [LAYA_BUNDLE_DIR]
+    cmds:
+      - go run ./internal/cmd/bundlecheck "${LAYA_BUNDLE_DIR}"
+
+  package:npm-native:
+    requires:
+      vars: [LAYA_ONNXRUNTIME_DISTRIBUTION, OMNIDIST_VERSION]
+    cmds:
+      - |
+        set -eu
+        source_dir="${LAYA_ONNXRUNTIME_DISTRIBUTION}"
+        package_dir=".omnidist/default/npm/@metalagman/layajev-linux-x64"
+        bin_dir="$package_dir/bin"
+        test "$(jq -r .version "$package_dir/package.json")" = "${OMNIDIST_VERSION}"
+        test ! -e "$bin_dir/libonnxruntime.so.1.29.0"
+        echo "5715f06d8992ca8eeeddcce43df3a7d38f97d537052126f558e912cb312460ca  $source_dir/lib/libonnxruntime.so.1.29.0" | sha256sum --check --status
+        echo "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c  $source_dir/LICENSE" | sha256sum --check --status
+        echo "53d3fa5821ac016ac24dd35775c996efec86e2ae0841e9a3a5e146c0ae916845  $source_dir/ThirdPartyNotices.txt" | sha256sum --check --status
+        install -m 0644 "$source_dir/lib/libonnxruntime.so.1.29.0" "$bin_dir/libonnxruntime.so.1.29.0"
+        install -m 0644 "$source_dir/LICENSE" "$bin_dir/LICENSE.onnxruntime"
+        install -m 0644 "$source_dir/ThirdPartyNotices.txt" "$bin_dir/ThirdPartyNotices.onnxruntime.txt"
+        echo "5715f06d8992ca8eeeddcce43df3a7d38f97d537052126f558e912cb312460ca  $bin_dir/libonnxruntime.so.1.29.0" | sha256sum --check --status
+
+  package:npm-smoke:
+    requires:
+      vars: [OMNIDIST_VERSION]
+    cmds:
+      - bash scripts/smoke-npm-package.sh
+
+  container:build:
+    cmds:
+      - docker build --platform linux/amd64 -t layajev:local .
+
+  container:doctor:
+    cmds:
+      - docker run --rm --entrypoint /opt/layajev/bin/layajev layajev:local doctor
+
+  container:serve:
+    cmds:
+      - docker run --rm --name layajev --read-only --tmpfs /tmp:rw,nosuid,nodev,size=64m --publish 127.0.0.1:8080:8080 layajev:local
