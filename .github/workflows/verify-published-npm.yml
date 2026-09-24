@@ -1,0 +1,32 @@
+name: layajev published npm verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published stable npm version to verify (without publishing)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify-linux-amd64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out verification script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Verify published npm packages and native runtime
+        shell: bash
+        env:
+          LAYAJEV_VERSION: ${{ inputs.version }}
+        run: bash scripts/verify-published-npm.sh "$LAYAJEV_VERSION"

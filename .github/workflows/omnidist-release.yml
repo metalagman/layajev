@@ -173,18 +173,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          version="${GITHUB_REF_NAME#v}"
-          for package in @metalagman/layajev-linux-x64 @metalagman/layajev; do
-            expected="$(npm pack --dry-run --json ".omnidist/default/npm/$package" | jq -r '.[0].shasum')"
-            actual=""
-            for attempt in {1..60}; do
-              if actual="$(npm view "$package@$version" dist.shasum --json --prefer-online 2>/dev/null | jq -r '.')"; then
-                break
-              fi
-              sleep 10
-            done
-            test "$actual" = "$expected"
-          done
-          env -u LAYA_ONNXRUNTIME_LIBRARY -u LAYA_TOKENIZERS_LIBRARY \
-            -u ORT_DISABLE_TELEMETRY npm_config_cache="$RUNNER_TEMP/layajev-clean-npx" \
-            npx -y "@metalagman/layajev@$version" doctor
+          LAYAJEV_STAGED_NPM_ROOT=.omnidist/default/npm \
+            bash scripts/verify-published-npm.sh "${GITHUB_REF_NAME#v}"

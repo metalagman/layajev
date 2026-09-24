@@ -147,7 +147,11 @@ settings and may require npm account verification. The workflow's publish job
 requests GitHub OIDC only after the staging job succeeds, verifies the exact
 uploaded candidate, and runs omnidist `verify`, `publish --dry-run`, and
 `npm publish`. It then compares published npm checksums and runs `doctor` via
-a clean `npx` install. From the current `main` commit, choose a new stable
+a clean `npx` install. The post-publish check waits for both tarballs to become
+downloadable; npm can expose package metadata before its tarballs are ready.
+If publication succeeds but this check fails, do not republish the same version.
+Run the `layajev published npm verification` workflow with that version after
+diagnosing the registry state. From the current `main` commit, choose a new stable
 SemVer version absent from both npm packages and push the exact tag:
 
 ```sh
