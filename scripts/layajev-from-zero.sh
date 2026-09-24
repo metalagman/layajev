@@ -6,8 +6,8 @@ set -Eeuo pipefail
 # stay in the chosen work directory; no system packages or global tools are
 # installed.
 
-readonly layajev_version=${LAYAJEV_VERSION:-0.2.6}
-readonly repository_ref=${LAYAJEV_REPOSITORY_REF:-main}
+readonly layajev_version=${LAYAJEV_VERSION:-0.2.7}
+readonly repository_ref=${LAYAJEV_REPOSITORY_REF:-v$layajev_version}
 readonly sdk_commit=573e5b62696ba441230cd6be71d593331b5d23af
 readonly sdk_sha256=03931635a92b7609c6c253ac1d4d618ebe4fc54956744db01c027b504fd9c426
 readonly go_sha256=708effb774be8237570d0add163225abbdfaf4fca28b2611df167beba4feef89
@@ -15,7 +15,7 @@ readonly uv_sha256=6b52a47358deea1c5e173278bf46b2b489747a59ae31f2a4362ed5c6c1c26
 
 usage() {
   printf 'Usage: bash %s [--bundle-only] [WORK_DIR]\n' "$0"
-  printf 'Default WORK_DIR: ./layajev-test-0.2.6\n'
+  printf 'Default WORK_DIR: ./layajev-test-0.2.7\n'
   printf 'Requires Linux x86_64, git, curl, tar, sha256sum, Node/npx, and setsid.\n'
   printf 'Downloads pinned Go, uv, SDK, model source, and locked exporter dependencies.\n'
   printf 'Allow at least 10 GiB free disk space and 4 GiB RAM.\n'
@@ -45,8 +45,8 @@ for program in git curl tar sha256sum node npx setsid; do
   command -v "$program" >/dev/null 2>&1 || die "missing prerequisite: $program"
 done
 
-mkdir -p -- "${1:-$PWD/layajev-test-0.2.6}"
-work_dir=$(cd -- "${1:-$PWD/layajev-test-0.2.6}" && pwd -P)
+mkdir -p -- "${1:-$PWD/layajev-test-0.2.7}"
+work_dir=$(cd -- "${1:-$PWD/layajev-test-0.2.7}" && pwd -P)
 [[ $work_dir != / ]] || die 'WORK_DIR must not be the filesystem root'
 tools_dir=$work_dir/tools
 repository_dir=${LAYAJEV_REPOSITORY_DIR:-$work_dir/layajev}

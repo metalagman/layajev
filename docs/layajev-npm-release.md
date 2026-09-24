@@ -27,7 +27,7 @@ model into the npm package, and leaves the API running until Ctrl-C:
 curl --fail --silent --show-error --location \
   --output layajev-from-zero.sh \
   https://raw.githubusercontent.com/metalagman/layajev/main/scripts/layajev-from-zero.sh
-bash layajev-from-zero.sh "$PWD/layajev-test-0.2.6"
+bash layajev-from-zero.sh "$PWD/layajev-test-0.2.7"
 ```
 
 Inspect the downloaded script before executing it. The first run downloads
@@ -39,7 +39,7 @@ After a release has actually appeared on npm, use its exact version on a
 compatible `linux/amd64` host:
 
 ```sh
-export LAYAJEV_VERSION=0.2.6
+export LAYAJEV_VERSION=0.2.7
 export LAYA_BUNDLE_DIR=/absolute/path/to/verified-bundle
 npx -y "@metalagman/layajev@$LAYAJEV_VERSION" serve --bundle "$LAYA_BUNDLE_DIR"
 ```
@@ -92,7 +92,8 @@ required external artifacts before making support claims.
 The tag-driven workflow `.github/workflows/omnidist-release.yml` resolves the
 version from the exact Git tag, acquires only checksum-pinned native archives,
 and performs `build`, `stage`, and `verify`. Before upload, it packs both staged
-packages, installs them together in a clean offline npm project, runs the
+packages after setting their product descriptions and canonical repository
+URLs, installs them together in a clean offline npm project, runs the
 installed CLI, and checks that the packaged ONNX Runtime opens and closes.
 An operator native qualification should also start the installed server with a verified bundle, query
 `GET /v1/models`, and make one `POST /v1/systemone` prediction. After staging
@@ -106,9 +107,13 @@ without changing the source tree, then run:
 
 ```sh
 export CGO_LDFLAGS=-L/absolute/path/containing/libtokenizers.a
+export LAYA_ONNXRUNTIME_DISTRIBUTION=/absolute/path/to/onnxruntime-linux-x64-1.29.0
 # Check out the exact release tag before running the following commands.
 npx -y @omnidist/omnidist@latest build
 npx -y @omnidist/omnidist@latest stage
+export OMNIDIST_VERSION="$(cat .omnidist/default/dist/VERSION)"
+task package:npm-native
+task package:npm-metadata
 npx -y @omnidist/omnidist@latest verify
 sha256sum .omnidist/default/dist/linux/amd64/layajev \
   .omnidist/default/npm/@metalagman/layajev-linux-x64/bin/layajev

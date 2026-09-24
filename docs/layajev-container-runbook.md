@@ -2,9 +2,9 @@
 
 The root [Dockerfile](../Dockerfile) builds a self-contained `linux/amd64`
 image. During `docker build`, it installs the exact published
-`@metalagman/layajev@0.2.6` native package, fetches the pinned official model
+`@metalagman/layajev@0.2.7` native package, fetches the pinned official model
 source and SDK, runs the locked exporter, verifies the completed FP32 bundle,
-and copies that bundle into `/models` in the final image. Until the first release from this new repository, the image uses the last published CLI (0.2.6); it does not package untagged source changes. **No model directory
+and copies that bundle into `/models` in the final image. The build pins the CLI and exporter checkout to the same release tag. **No model directory
 or volume is required by `docker run`.** Model acquisition and conversion
 remain build-time operations, outside the root `laya` library. Runtime
 inference is local and in-process, with no download or Python service.

@@ -111,6 +111,27 @@ tasks:
         install -m 0644 "$source_dir/ThirdPartyNotices.txt" "$bin_dir/ThirdPartyNotices.onnxruntime.txt"
         echo "5715f06d8992ca8eeeddcce43df3a7d38f97d537052126f558e912cb312460ca  $bin_dir/libonnxruntime.so.1.29.0" | sha256sum --check --status
 
+  package:npm-metadata:
+    desc: Set product descriptions and canonical URLs on both staged npm packages.
+    cmds:
+      - |
+        set -eu
+        repository=https://github.com/metalagman/layajev
+        meta=.omnidist/default/npm/@metalagman/layajev
+        platform=.omnidist/default/npm/@metalagman/layajev-linux-x64
+        test -f "$meta/package.json" && test -f "$platform/package.json"
+        npm pkg set --prefix "$meta" \
+          'description=Local Laya inference server with a Jev-compatible API subset' \
+          "homepage=$repository#readme" "bugs.url=$repository/issues"
+        npm pkg set --prefix "$platform" \
+          'description=Native linux/amd64 binary for layajev, a local Jev-compatible Laya API' \
+          "homepage=$repository#readme" "bugs.url=$repository/issues"
+        for package_dir in "$meta" "$platform"; do
+          jq -e --arg repository "$repository" \
+            '.homepage == ($repository + "#readme") and .bugs.url == ($repository + "/issues") and .repository.url == $repository' \
+            "$package_dir/package.json" > /dev/null
+        done
+
   package:npm-smoke:
     requires:
       vars: [OMNIDIST_VERSION]

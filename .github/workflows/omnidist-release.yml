@@ -89,6 +89,7 @@ jobs:
           export OMNIDIST_VERSION="$(cat .omnidist/default/dist/VERSION)"
           test "$OMNIDIST_VERSION" = "${GITHUB_REF_NAME#v}"
           task package:npm-native
+          task package:npm-metadata
           npx -y @omnidist/omnidist@0.1.37 verify
           task package:npm-smoke
           npm pack --dry-run --json .omnidist/default/npm/@metalagman/layajev-linux-x64 \

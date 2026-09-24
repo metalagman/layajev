@@ -21,5 +21,6 @@ profiles:
                 publish-auth: trusted
                 repository-url: https://github.com/metalagman/layajev
                 license: MIT
+                keywords: [laya, jev, onnx, inference, local-ai]
                 readme-path: README.md
                 include-readme: true

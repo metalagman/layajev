@@ -4,7 +4,7 @@
 # ONNX Runtime. Bundle construction is an explicit, verified image-build step;
 # the final image needs no model mount or network access for inference.
 FROM node:24-bookworm-slim AS packages
-ARG LAYAJEV_VERSION=0.2.6
+ARG LAYAJEV_VERSION=0.2.7
 RUN test "$(dpkg --print-architecture)" = amd64 \
     && npm install --prefix /opt/layajev --omit=dev --ignore-scripts \
       --no-audit --no-fund --no-package-lock \
@@ -13,21 +13,21 @@ RUN test "$(dpkg --print-architecture)" = amd64 \
     && test -f /opt/layajev/node_modules/@metalagman/layajev-linux-x64/bin/libonnxruntime.so.1.29.0
 
 FROM node:24-trixie-slim AS bundle
-ARG LAYAJEV_VERSION=0.2.6
+ARG LAYAJEV_VERSION=0.2.7
 RUN test "$(dpkg --print-architecture)" = amd64 \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       ca-certificates curl git tar util-linux \
     && rm -rf /var/lib/apt/lists/*
 ENV UV_NO_PROGRESS=1 npm_config_progress=false
-ARG LAYAJEV_REPOSITORY_REF=main
+ARG LAYAJEV_REPOSITORY_REF=
 ENV LAYAJEV_REPOSITORY_REF=${LAYAJEV_REPOSITORY_REF}
 ENV LAYAJEV_VERSION=${LAYAJEV_VERSION}
 COPY scripts/layajev-from-zero.sh /usr/local/bin/layajev-from-zero
 RUN bash /usr/local/bin/layajev-from-zero --bundle-only /build
 
 FROM ubuntu:24.04
-ARG LAYAJEV_VERSION=0.2.6
+ARG LAYAJEV_VERSION=0.2.7
 LABEL org.opencontainers.image.source="https://github.com/metalagman/layajev" \
       org.opencontainers.image.title="layajev" \
       org.opencontainers.image.version="${LAYAJEV_VERSION}"
