@@ -1,0 +1,1614 @@
+{
+  "date": "2026-10-01",
+  "platform": "Linux-6.18.26.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "cpu_model": "AMD Ryzen 7 PRO 7840U",
+  "host_logical_cpus": 4,
+  "binary_version": "0.2.4",
+  "binary_sha256": "cff6b9e20aa38f12bb4fd915d53217df5d50d368fe8c8c8458090dfcbf1f0f1a",
+  "binary_bytes": 32231920,
+  "ort_sha256": "5715f06d8992ca8eeeddcce43df3a7d38f97d537052126f558e912cb312460ca",
+  "ort_bytes": 28497752,
+  "bundle_manifest": {
+    "bundle": {
+      "id": "laya-multilingual",
+      "version": "0.1.0"
+    },
+    "calibration": {
+      "actions": [
+        {
+          "id": "escalate",
+          "index": 0
+        }
+      ],
+      "config_path": "rl_agent_config.json",
+      "invalid_temperature": 1.0,
+      "selection_order": [
+        "option_bucket",
+        "qtype",
+        "default"
+      ],
+      "temperature_max": 5.0,
+      "temperature_min": 0.5
+    },
+    "files": [
+      {
+        "path": "LICENSE.model",
+        "role": "license",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+        "size": 10173
+      },
+      {
+        "path": "LICENSE.sdk",
+        "role": "license",
+        "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+        "size": 10173
+      },
+      {
+        "path": "NOTICE.model",
+        "role": "notice",
+        "sha256": "efc73daa6fe86a02707e1de549be3a6347e33b4c3cf5ac5060a81b57f43c832c",
+        "size": 80
+      },
+      {
+        "path": "NOTICE.sdk",
+        "role": "notice",
+        "sha256": "6edaf42ee71df8d66e47a0d394f8801af18f0be15600771b2b3d2529f1c30de8",
+        "size": 100
+      },
+      {
+        "path": "model.onnx",
+        "role": "model",
+        "sha256": "00a1d003b9df8998f132d0bfa9e32a71bd52b65e80931a367d6f1eaa4a7e29df",
+        "size": 191930
+      },
+      {
+        "path": "model.onnx.data",
+        "role": "model-external-data",
+        "sha256": "6ef993ee707fe1d6a75529f4a1f8347ff89966ff955d332ea3ebe4e5171a9ac1",
+        "size": 1287651328
+      },
+      {
+        "path": "rl_agent_config.json",
+        "role": "agent-config",
+        "sha256": "25061739243b617ad88d1219ba6f8a9c86c5881ca28df024fa2d9b3b2fcc30c6",
+        "size": 472
+      },
+      {
+        "path": "tokenizer/tokenizer.json",
+        "role": "tokenizer",
+        "sha256": "609d8f4c067cd3950f88594c5a802616cea245823836ef5848ee4fc40aab5b6f",
+        "size": 34363188
+      },
+      {
+        "path": "tokenizer/tokenizer_config.json",
+        "role": "tokenizer-config",
+        "sha256": "424b69444bf7b5809dc2cd2e36d0bd71b8055124dd24274d6db3c655d38205e7",
+        "size": 502
+      }
+    ],
+    "model": {
+      "external_data": [
+        "model.onnx.data"
+      ],
+      "format": "onnx",
+      "inputs": [
+        {
+          "dimensions": [
+            "batch",
+            "sequence"
+          ],
+          "dtype": "int64",
+          "name": "input_ids"
+        },
+        {
+          "dimensions": [
+            "batch",
+            "sequence"
+          ],
+          "dtype": "int64",
+          "name": "attention_mask"
+        },
+        {
+          "dimensions": [
+            "batch",
+            "markers"
+          ],
+          "dtype": "int64",
+          "name": "marker_pos"
+        },
+        {
+          "dimensions": [
+            "batch",
+            "markers"
+          ],
+          "dtype": "bool",
+          "name": "marker_mask"
+        },
+        {
+          "dimensions": [
+            "batch"
+          ],
+          "dtype": "int64",
+          "name": "qtype"
+        }
+      ],
+      "opset": 18,
+      "outputs": [
+        {
+          "dimensions": [
+            "batch",
+            "markers"
+          ],
+          "dtype": "float32",
+          "name": "logits"
+        },
+        {
+          "dimensions": [
+            "batch",
+            "actions"
+          ],
+          "dtype": "float32",
+          "name": "act_logits"
+        }
+      ],
+      "path": "model.onnx",
+      "precision": "fp32"
+    },
+    "preprocessing": {
+      "head_max_len": 256,
+      "head_reserve": 16,
+      "max_len": 1024,
+      "option_max_len": 48,
+      "qtypes": {
+        "choice": 0,
+        "noul": 2,
+        "score": 1
+      },
+      "truncation_side": "right",
+      "version": 1
+    },
+    "provenance": {
+      "created_at": "2026-09-22T00:00:00Z",
+      "exporter": {
+        "git_revision": "4481f6dbef5bc45da49eaa7781815985bd5af052",
+        "name": "laya-go-export",
+        "source_sha256": "decade3eb9c900d65389b7d8daaced42f49a4f1670b3e7af73fa09aa6bb154d6",
+        "version": "1.0.0"
+      },
+      "licenses": [
+        {
+          "component": "source-model",
+          "path": "LICENSE.model",
+          "spdx": "Apache-2.0"
+        },
+        {
+          "component": "sdk-derived-exporter-code",
+          "path": "LICENSE.sdk",
+          "spdx": "Apache-2.0"
+        }
+      ],
+      "lock": {
+        "path": "tools/export/uv.lock",
+        "sha256": "b08b67cdf27c9820ce9a4173a583b6da4706cfa72d9a60a333e58fc8a29b3e12"
+      },
+      "profile": {
+        "id": "laya-multilingual-v1",
+        "sha256": "2dc717bbbf2bacb9c00d57f2ba7279c6a4332900bca84d12c000ebd6401a0235"
+      },
+      "redistribution": "approved",
+      "sdk": {
+        "repository": "NandhaKishorM/laya",
+        "revision": "573e5b62696ba441230cd6be71d593331b5d23af",
+        "version": "0.3.5"
+      },
+      "source_date_epoch": 1790035200,
+      "source_model": {
+        "id": "convaiinnovations/laya-multilingual",
+        "revision": "052592a15d198d9ad47da779604259b10b47b7aa"
+      }
+    },
+    "runtime": {
+      "engine": "onnxruntime",
+      "execution_providers": [
+        "CPUExecutionProvider"
+      ],
+      "maximum_exclusive": "2.0.0",
+      "minimum_version": "1.20.0"
+    },
+    "schema_version": 1,
+    "tokenizer": {
+      "config_path": "tokenizer/tokenizer_config.json",
+      "json_path": "tokenizer/tokenizer.json",
+      "special_tokens": {
+        "cls": 2,
+        "mask": 4,
+        "pad": 0,
+        "sep": 3
+      }
+    }
+  },
+  "bundle_bytes": 1322231494,
+  "method": "Direct native layajev 0.2.4 binary; fresh process per run, OS page cache not flushed. HTTP loopback, Python stdlib http.client, fresh connection per request, closed-loop ThreadPoolExecutor workers, 5 warmups per phase, nearest-rank percentiles, process CPU ticks and VmRSS/VmHWM from /proc. ORT default threading, queue-size 16, GOMAXPROCS equals requested CPU count. First three runs used native default worker affinity on all 4 host CPUs. Last three runs reset every thread affinity after API readiness (2 CPUs = 0,2; 1 CPU = 0; 4 CPUs = 0,1,2,3), verified at end. Their startup occurred before this reset. No Docker or enforced RAM limit.",
+  "runs": [
+    {
+      "cpus_affinity": 4,
+      "gomaxprocs": 4,
+      "repetition": 1,
+      "ready_s": 3.275118952999037,
+      "at_ready": {
+        "rss_mib": 629.3515625,
+        "hwm_mib": 635.0078125,
+        "threads": 11,
+        "cpu_s": 3.13
+      },
+      "first_request_ms": 69.39794600111782,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 657.640625,
+        "hwm_mib": 657.640625,
+        "threads": 13,
+        "cpu_s": 3.4
+      },
+      "idle_cpu_core_equivalents": 0.05991829008691899,
+      "phases": [
+        {
+          "name": "short_noul",
+          "requests": 100,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 50.45115599932615,
+          "p95_ms": 66.4169400006358,
+          "min_ms": 42.37672200179077,
+          "max_ms": 100.0708850006049,
+          "rps": 18.851843706429275,
+          "wall_s": 5.304520956000488,
+          "cpu_core_equivalents": 3.6252095447463497,
+          "resources_after": {
+            "rss_mib": 665.015625,
+            "hwm_mib": 665.015625,
+            "threads": 13,
+            "cpu_s": 23.62
+          },
+          "usage": {
+            "input_tokens": 36,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice.",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            42.37672200179077,
+            42.79553299784311,
+            42.83974899954046,
+            43.1294859990885,
+            43.913386998610804,
+            44.102617001044564,
+            44.26445200078888,
+            44.28110299704713,
+            44.36841500137234,
+            44.38031999961822,
+            44.74194499925943,
+            44.98854399935226,
+            45.0448330011568,
+            45.088056998793036,
+            45.102970998414094,
+            45.172436999564525,
+            45.289415000297595,
+            45.33920599715202,
+            45.56218000288936,
+            45.83857599936891,
+            45.83942400131491,
+            46.10468999817385,
+            46.20190199784702,
+            46.52250000071945,
+            46.87695499887923,
+            47.20538400215446,
+            47.278677997383056,
+            47.65700699863373,
+            47.84181799914222,
+            48.03154800174525,
+            48.059668002679246,
+            48.13515299974824,
+            48.182481001276756,
+            48.20430700056022,
+            48.45056400154135,
+            48.60102599923266,
+            48.9745570012019,
+            49.05596899698139,
+            49.13177100024768,
+            49.543286997504765,
+            49.62375200193492,
+            49.82150199793978,
+            49.92418599795201,
+            49.94343499856768,
+            49.966931001108605,
+            49.990239000180736,
+            50.1258840013179,
+            50.290163002500776,
+            50.336629999947036,
+            50.45115599932615,
+            51.10162900018622,
+            51.31937399710296,
+            51.36286399647361,
+            51.54532899905462,
+            51.70212799930596,
+            51.96914399857633,
+            52.02997499873163,
+            52.25721700116992,
+            52.283638000517385,
+            52.61755000174162,
+            53.142938999371836,
+            53.370672998426016,
+            53.389663000416476,
+            53.412384000694146,
+            53.56398000003537,
+            53.996990998712135,
+            54.04140899918275,
+            54.081410002254415,
+            54.21105300047202,
+            54.21720699814614,
+            54.381687001296086,
+            54.55589700068231,
+            54.65521600126522,
+            54.70828000034089,
+            54.93312700127717,
+            55.68799300090177,
+            56.066706998535665,
+            56.58443699940108,
+            56.79798099663458,
+            56.877692997659324,
+            57.117271000606706,
+            57.23111399856862,
+            57.451566000963794,
+            59.38927199895261,
+            59.39871500231675,
+            59.677365999959875,
+            60.0709390018892,
+            60.15843299974222,
+            60.249735000979854,
+            60.34848399940529,
+            60.413902003347175,
+            61.27001799904974,
+            62.077528000372695,
+            65.72438099829014,
+            66.4169400006358,
+            68.00000899966108,
+            76.25264200032689,
+            79.20307799940929,
+            94.77346100175055,
+            100.0708850006049
+          ]
+        },
+        {
+          "name": "mixed_3_questions",
+          "requests": 50,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 132.40068899904145,
+          "p95_ms": 159.57112899923231,
+          "min_ms": 113.85763499856694,
+          "max_ms": 164.79023799911374,
+          "rps": 7.414573432255246,
+          "wall_s": 6.743476270999963,
+          "cpu_core_equivalents": 3.692457569263112,
+          "resources_after": {
+            "rss_mib": 694.63671875,
+            "hwm_mib": 694.7890625,
+            "threads": 13,
+            "cpu_s": 50.9
+          },
+          "usage": {
+            "input_tokens": 99,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice.",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              },
+              "route": {
+                "type": "choice",
+                "instructions": "Choose a support route.",
+                "criteria": {
+                  "billing": "Billing support",
+                  "technical": "Technical support"
+                }
+              },
+              "urgency": {
+                "type": "score",
+                "instructions": "How urgent is this request?",
+                "criteria": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            113.85763499856694,
+            116.12389999936568,
+            118.99745700065978,
+            119.40074199810624,
+            119.7632710027392,
+            119.77519699939876,
+            120.42810399725568,
+            120.58685599913588,
+            120.6815839977935,
+            120.84191900066799,
+            123.46859600074822,
+            123.54371900073602,
+            125.84079400039627,
+            126.03286000012304,
+            126.1760069974116,
+            126.56655499813496,
+            126.64137100000517,
+            126.89098699775059,
+            127.34622299831244,
+            128.5713739998755,
+            130.82232099986868,
+            131.77275199996075,
+            131.96252700072364,
+            132.301006000489,
+            132.40068899904145,
+            132.69292999757454,
+            133.97579899901757,
+            134.0136459984933,
+            134.3334560006042,
+            134.46785999985877,
+            135.15478000044823,
+            135.60741699984646,
+            135.61004599978332,
+            137.46169599835412,
+            138.7864870011981,
+            139.94310699854395,
+            142.0577319986478,
+            142.32610699764336,
+            143.27239499834832,
+            144.72340300198994,
+            147.09980499901576,
+            149.40631100034807,
+            151.76731499741436,
+            153.6326370005554,
+            155.83052799775032,
+            155.97047399933217,
+            156.3197930008755,
+            159.57112899923231,
+            164.37290900285007,
+            164.79023799911374
+          ]
+        },
+        {
+          "name": "long_noul",
+          "requests": 30,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 453.47680800114176,
+          "p95_ms": 636.4602319990809,
+          "min_ms": 407.842458000232,
+          "max_ms": 653.5266190003313,
+          "rps": 2.1002464536508487,
+          "wall_s": 14.284037927001918,
+          "cpu_core_equivalents": 3.6439275970842226,
+          "resources_after": {
+            "rss_mib": 730.05078125,
+            "hwm_mib": 730.05078125,
+            "threads": 13,
+            "cpu_s": 111.87
+          },
+          "usage": {
+            "input_tokens": 352,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. ",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            407.842458000232,
+            431.63490900042234,
+            434.20725200121524,
+            436.7567199988116,
+            437.4276300004567,
+            439.88146999981836,
+            440.94144200062146,
+            444.75980100105517,
+            445.49097799972515,
+            447.57662000120035,
+            448.23629300299217,
+            448.8792119991558,
+            450.72412099762005,
+            451.579906999541,
+            453.47680800114176,
+            453.67799199812,
+            458.95602599921403,
+            462.2803170022962,
+            463.27468199888244,
+            463.28449900101987,
+            463.77838300031726,
+            465.33910899961484,
+            465.5891629990947,
+            479.6072200006165,
+            482.80858200087096,
+            548.4359410002071,
+            566.2972009995428,
+            595.7691579969833,
+            636.4602319990809,
+            653.5266190003313
+          ]
+        },
+        {
+          "name": "short_noul_c4",
+          "requests": 100,
+          "concurrency": 4,
+          "warmups": 5,
+          "p50_ms": 215.64828400005354,
+          "p95_ms": 253.36767400222016,
+          "min_ms": 64.49575399892638,
+          "max_ms": 268.0488459991466,
+          "rps": 18.155091998276536,
+          "wall_s": 5.508096571997157,
+          "cpu_core_equivalents": 3.6310183996553045,
+          "resources_after": {
+            "rss_mib": 730.05078125,
+            "hwm_mib": 730.05078125,
+            "threads": 13,
+            "cpu_s": 132.95
+          },
+          "usage": {
+            "input_tokens": 36,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice.",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            64.49575399892638,
+            120.30017899814993,
+            171.88438899756875,
+            191.34213099823683,
+            192.9637030007143,
+            195.81247799942503,
+            196.26808799876017,
+            197.18114799979958,
+            197.28324400057318,
+            197.36652199935634,
+            197.4759759978042,
+            197.82120300078532,
+            199.16047600054299,
+            199.7107369970763,
+            200.00717800212442,
+            200.97933600118267,
+            203.6458840011619,
+            203.680897000595,
+            204.05379000294488,
+            204.32229299694882,
+            205.9170649990847,
+            205.97476700277184,
+            206.17400300034205,
+            206.33145299871103,
+            206.75728599962895,
+            207.47963599933428,
+            207.83177799967234,
+            207.9304860017146,
+            207.9860660014674,
+            208.06849200016586,
+            208.10053099921788,
+            208.1599359989923,
+            208.48564400148462,
+            208.88817499871948,
+            209.3197260001034,
+            209.8783090004872,
+            210.39431400276953,
+            211.392754001281,
+            211.5763750007318,
+            211.70134500061977,
+            211.88659999825177,
+            212.0033359969966,
+            212.07634399979725,
+            212.34777399877203,
+            212.3928379987774,
+            212.49883800192038,
+            212.76779700201587,
+            213.60999800162972,
+            215.09969899852877,
+            215.64828400005354,
+            215.72260600078152,
+            215.75281499826815,
+            215.75781299907248,
+            215.84685999914655,
+            216.0210250003729,
+            216.09343299860484,
+            217.6195629981521,
+            217.62842400130467,
+            219.23656900253263,
+            219.62866700050654,
+            219.87143099977402,
+            222.0381470033317,
+            222.06334699876606,
+            222.4545470016892,
+            223.15279100075713,
+            223.71214099985082,
+            223.93946499869344,
+            224.07979700074065,
+            225.06043799876352,
+            225.5079440001282,
+            226.27563000060036,
+            227.26433900243137,
+            228.12703599993256,
+            229.71016600058647,
+            229.90407799807144,
+            231.12096899785683,
+            231.49477100014337,
+            231.78966799969203,
+            231.95080399818835,
+            232.3369610021473,
+            232.49300500174286,
+            232.55877799965674,
+            232.91156699997373,
+            235.77492800177424,
+            236.72524600260658,
+            237.82220399880316,
+            237.99243200119236,
+            241.83172400080366,
+            243.40654499974335,
+            243.4953919982945,
+            244.20478599859052,
+            248.20376700154156,
+            249.90503899971372,
+            250.03437800114625,
+            253.36767400222016,
+            253.68537500253296,
+            255.95828700170387,
+            262.70528900204226,
+            263.6209250013053,
+            268.0488459991466
+          ]
+        }
+      ],
+      "final": {
+        "rss_mib": 730.05078125,
+        "hwm_mib": 730.05078125,
+        "threads": 13,
+        "cpu_s": 132.96
+      }
+    },
+    {
+      "cpus_affinity": 4,
+      "gomaxprocs": 4,
+      "repetition": 2,
+      "ready_s": 3.404758259999653,
+      "at_ready": {
+        "rss_mib": 630.37109375,
+        "hwm_mib": 635.1484375,
+        "threads": 12,
+        "cpu_s": 3.26
+      },
+      "first_request_ms": 55.28792100085411,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 657.55859375,
+        "hwm_mib": 657.55859375,
+        "threads": 12,
+        "cpu_s": 3.52
+      },
+      "idle_cpu_core_equivalents": 0.06988944454363642,
+      "phases": [],
+      "final": {
+        "rss_mib": 657.55859375,
+        "hwm_mib": 657.55859375,
+        "threads": 12,
+        "cpu_s": 3.52
+      }
+    },
+    {
+      "cpus_affinity": 4,
+      "gomaxprocs": 4,
+      "repetition": 3,
+      "ready_s": 3.3189947320024658,
+      "at_ready": {
+        "rss_mib": 630.43359375,
+        "hwm_mib": 636.34375,
+        "threads": 11,
+        "cpu_s": 3.19
+      },
+      "first_request_ms": 62.529894999897806,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 657.6015625,
+        "hwm_mib": 657.6015625,
+        "threads": 11,
+        "cpu_s": 3.45
+      },
+      "idle_cpu_core_equivalents": 0.04997066931597153,
+      "phases": [],
+      "final": {
+        "rss_mib": 657.6015625,
+        "hwm_mib": 657.6015625,
+        "threads": 11,
+        "cpu_s": 3.45
+      }
+    },
+    {
+      "cpus_affinity": 2,
+      "gomaxprocs": 2,
+      "repetition": 1,
+      "ready_s": 3.322836166000343,
+      "at_ready": {
+        "rss_mib": 629.18359375,
+        "hwm_mib": 635.0390625,
+        "threads": 10,
+        "cpu_s": 3.19
+      },
+      "first_request_ms": 188.6409979997552,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 656.234375,
+        "hwm_mib": 656.234375,
+        "threads": 10,
+        "cpu_s": 3.59
+      },
+      "idle_cpu_core_equivalents": 0.039924357794576,
+      "phases": [
+        {
+          "name": "short_noul",
+          "requests": 100,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 196.51586699910695,
+          "p95_ms": 216.00924199810834,
+          "min_ms": 120.30950999906054,
+          "max_ms": 278.3780050012865,
+          "rps": 5.313450677481143,
+          "wall_s": 18.82016152399956,
+          "cpu_core_equivalents": 1.8713973286088585,
+          "resources_after": {
+            "rss_mib": 663.71484375,
+            "hwm_mib": 663.71484375,
+            "threads": 11,
+            "cpu_s": 40.41
+          },
+          "usage": {
+            "input_tokens": 36,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice.",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            120.30950999906054,
+            125.36153800101602,
+            128.40651200167486,
+            128.48162699810928,
+            129.18518599690287,
+            134.6089660000871,
+            137.28214200091315,
+            140.53475599939702,
+            142.19596600014484,
+            143.04326300043613,
+            143.43098199969972,
+            147.6908029981132,
+            149.60670500295237,
+            152.95302600134164,
+            153.4772500017425,
+            154.682355998375,
+            154.82213900031638,
+            158.4290710015921,
+            158.643282000412,
+            160.35865800222382,
+            160.43543799969484,
+            161.35576600208879,
+            162.88945300038904,
+            167.44675500012818,
+            169.41329800101812,
+            169.75646300124936,
+            170.28208800184075,
+            174.1830549981387,
+            174.79608800204005,
+            174.8370610002894,
+            175.87069699948188,
+            178.36016900037066,
+            181.28282700126874,
+            181.4020050005638,
+            183.81557399698067,
+            184.4856499992602,
+            185.46886499825632,
+            186.46694400013075,
+            188.18872700285283,
+            188.50990000282764,
+            191.88877099804813,
+            191.93081300181802,
+            191.94313399930252,
+            192.50949900015257,
+            192.8123429970583,
+            193.12500999876647,
+            195.08898299682187,
+            195.64121100120246,
+            196.3353890023427,
+            196.51586699910695,
+            198.04477200159454,
+            198.5085269989213,
+            199.6911900023406,
+            199.74621000073967,
+            200.2660839971213,
+            200.3953650018957,
+            200.80452600086574,
+            201.60810200104606,
+            201.82469399878755,
+            202.19171099961386,
+            203.02436999918427,
+            203.0645730010292,
+            203.2245439986582,
+            203.32652700017206,
+            203.47072599906824,
+            204.06260099844076,
+            204.0813640014676,
+            204.1629980012658,
+            205.34735100227408,
+            206.4035010007501,
+            206.92437100296956,
+            206.95692899971618,
+            207.09448699926725,
+            207.0967460022075,
+            207.90597300219815,
+            208.07402199716307,
+            208.20471899787663,
+            208.3538939987193,
+            208.82538899968495,
+            210.04081499995664,
+            210.29663599983905,
+            211.1276719988382,
+            211.44262600137154,
+            211.6120780010533,
+            211.7891919988324,
+            211.90996299992548,
+            212.03434099879814,
+            212.65988199957064,
+            212.85250799701316,
+            214.16775499892537,
+            214.6600630003377,
+            214.80979599800776,
+            214.90046499820892,
+            215.65071700024419,
+            216.00924199810834,
+            216.3422810008342,
+            218.19473099822062,
+            223.03518999979133,
+            225.209651998739,
+            278.3780050012865
+          ]
+        }
+      ],
+      "initial_thread_affinity": {
+        "158052": [
+          0,
+          2
+        ],
+        "158053": [
+          0,
+          2
+        ],
+        "158054": [
+          0,
+          2
+        ],
+        "158055": [
+          0,
+          2
+        ],
+        "158056": [
+          0,
+          2
+        ],
+        "158057": [
+          0,
+          2
+        ],
+        "158060": [
+          0,
+          2
+        ],
+        "158061": [
+          1
+        ],
+        "158062": [
+          2
+        ],
+        "158063": [
+          3
+        ]
+      },
+      "forced_thread_affinity": [
+        0,
+        2
+      ],
+      "final_thread_affinity": {
+        "158052": [
+          0,
+          2
+        ],
+        "158053": [
+          0,
+          2
+        ],
+        "158054": [
+          0,
+          2
+        ],
+        "158055": [
+          0,
+          2
+        ],
+        "158056": [
+          0,
+          2
+        ],
+        "158057": [
+          0,
+          2
+        ],
+        "158060": [
+          0,
+          2
+        ],
+        "158061": [
+          0,
+          2
+        ],
+        "158062": [
+          0,
+          2
+        ],
+        "158063": [
+          0,
+          2
+        ],
+        "158073": [
+          0,
+          2
+        ]
+      },
+      "final": {
+        "rss_mib": 663.71484375,
+        "hwm_mib": 663.71484375,
+        "threads": 11,
+        "cpu_s": 40.41
+      }
+    },
+    {
+      "cpus_affinity": 1,
+      "gomaxprocs": 1,
+      "repetition": 1,
+      "ready_s": 3.360084084000846,
+      "at_ready": {
+        "rss_mib": 628.578125,
+        "hwm_mib": 634.53125,
+        "threads": 9,
+        "cpu_s": 3.21
+      },
+      "first_request_ms": 412.4309400031052,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 654.0234375,
+        "hwm_mib": 654.0234375,
+        "threads": 9,
+        "cpu_s": 3.64
+      },
+      "idle_cpu_core_equivalents": 0.039900815590064594,
+      "phases": [
+        {
+          "name": "short_noul",
+          "requests": 100,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 415.0105490007263,
+          "p95_ms": 439.8562899987155,
+          "min_ms": 396.0418110000319,
+          "max_ms": 455.73027900172747,
+          "rps": 2.4046915676188076,
+          "wall_s": 41.58537475100093,
+          "cpu_core_equivalents": 0.9385511188416207,
+          "resources_after": {
+            "rss_mib": 661.08203125,
+            "hwm_mib": 661.08203125,
+            "threads": 10,
+            "cpu_s": 44.6
+          },
+          "usage": {
+            "input_tokens": 36,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice.",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            396.0418110000319,
+            399.77054799965117,
+            399.8953669979528,
+            399.9522779995459,
+            400.02127700063284,
+            400.4594719990564,
+            400.4699340002844,
+            400.7357320006122,
+            400.79005600273376,
+            401.59719599978416,
+            401.75774399904185,
+            403.714445001242,
+            403.753938000591,
+            403.7835079980141,
+            403.82106700053555,
+            403.9752429998771,
+            403.9787370020349,
+            404.1794589975325,
+            406.7927369978861,
+            406.9744359985634,
+            407.203748000029,
+            407.3991699988255,
+            407.8171500004828,
+            407.8483800003596,
+            407.86922500046785,
+            407.8920930005552,
+            408.33114799897885,
+            408.5483250019024,
+            408.6731300012616,
+            408.6819709991687,
+            411.36322999955155,
+            411.3709520024713,
+            411.57798300264403,
+            411.68349900181056,
+            411.7462020003586,
+            411.7801220018009,
+            411.7814040000667,
+            411.85160499662743,
+            411.861486001726,
+            411.86642100001336,
+            411.91924499798915,
+            411.976842002332,
+            411.9912520000071,
+            412.10212799705914,
+            412.2336880027433,
+            412.45217400137335,
+            412.58896400177036,
+            414.16457499872195,
+            414.9830150017806,
+            415.0105490007263,
+            415.227909998066,
+            415.2725830026611,
+            415.3297640004894,
+            415.513642001315,
+            415.69143000015174,
+            415.7036899996456,
+            415.76038299899665,
+            415.7699349998438,
+            415.87319999962347,
+            415.9397280018311,
+            415.9630950016435,
+            416.0327080026036,
+            416.3028469993151,
+            416.50995499730925,
+            416.5599000007205,
+            416.6083029995207,
+            416.679257999931,
+            418.8513760018395,
+            419.08976400009124,
+            419.22893099763314,
+            419.3040519967326,
+            419.7004570014542,
+            419.7012539989373,
+            419.9446810016525,
+            420.0706640003773,
+            420.2233489995706,
+            421.8789940023271,
+            422.4670330004301,
+            422.7091089996975,
+            423.7766769983864,
+            423.7816169988946,
+            423.7844179988315,
+            423.8707990007242,
+            424.7314499989443,
+            425.4706969986728,
+            425.9399869988556,
+            427.4211070005549,
+            427.5712359994941,
+            427.7032460013288,
+            427.8019640005368,
+            428.49644899979467,
+            433.46784399909666,
+            435.0008229994273,
+            435.7097289976082,
+            439.8562899987155,
+            441.4432250014215,
+            443.522228000802,
+            443.9293200011889,
+            446.56862700139754,
+            455.73027900172747
+          ]
+        }
+      ],
+      "initial_thread_affinity": {
+        "158157": [
+          0
+        ],
+        "158158": [
+          0
+        ],
+        "158159": [
+          0
+        ],
+        "158160": [
+          0
+        ],
+        "158161": [
+          0
+        ],
+        "158162": [
+          0
+        ],
+        "158173": [
+          1
+        ],
+        "158174": [
+          2
+        ],
+        "158175": [
+          3
+        ]
+      },
+      "forced_thread_affinity": [
+        0
+      ],
+      "final_thread_affinity": {
+        "158157": [
+          0
+        ],
+        "158158": [
+          0
+        ],
+        "158159": [
+          0
+        ],
+        "158160": [
+          0
+        ],
+        "158161": [
+          0
+        ],
+        "158162": [
+          0
+        ],
+        "158173": [
+          0
+        ],
+        "158174": [
+          0
+        ],
+        "158175": [
+          0
+        ],
+        "158177": [
+          0
+        ]
+      },
+      "final": {
+        "rss_mib": 661.08203125,
+        "hwm_mib": 661.08203125,
+        "threads": 10,
+        "cpu_s": 44.6
+      }
+    },
+    {
+      "cpus_affinity": 4,
+      "gomaxprocs": 4,
+      "repetition": 1,
+      "ready_s": 3.38409890299954,
+      "at_ready": {
+        "rss_mib": 630.4140625,
+        "hwm_mib": 636.19140625,
+        "threads": 11,
+        "cpu_s": 3.22
+      },
+      "first_request_ms": 55.26931100030197,
+      "first_response": {
+        "answers": {
+          "billing": {
+            "noul": 0,
+            "type": "noul"
+          }
+        },
+        "model": "laya-multilingual",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 0
+        }
+      },
+      "idle": {
+        "rss_mib": 657.58984375,
+        "hwm_mib": 657.58984375,
+        "threads": 11,
+        "cpu_s": 3.48
+      },
+      "idle_cpu_core_equivalents": 0.05991705885255243,
+      "phases": [
+        {
+          "name": "near_limit_noul",
+          "requests": 20,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 1880.1647389991558,
+          "p95_ms": 2099.961504998646,
+          "min_ms": 1756.563290997292,
+          "max_ms": 2230.264822999743,
+          "rps": 0.526078875957168,
+          "wall_s": 38.01711285900092,
+          "cpu_core_equivalents": 3.674923987998797,
+          "resources_after": {
+            "rss_mib": 941.22265625,
+            "hwm_mib": 941.22265625,
+            "threads": 12,
+            "cpu_s": 176.53
+          },
+          "usage": {
+            "input_tokens": 977,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. ",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            1756.563290997292,
+            1772.4544100019557,
+            1799.1366759997618,
+            1811.6850679980416,
+            1813.9423380016524,
+            1826.191446998564,
+            1844.8884959980205,
+            1860.024429999612,
+            1860.8239950008283,
+            1880.1647389991558,
+            1883.3548650000012,
+            1891.952167999989,
+            1895.9987230009574,
+            1903.6053039999388,
+            1907.8165530008846,
+            1938.282243998401,
+            1944.7635180004,
+            2090.6852789994446,
+            2099.961504998646,
+            2230.264822999743
+          ]
+        },
+        {
+          "name": "long_mixed_3_questions",
+          "requests": 20,
+          "concurrency": 1,
+          "warmups": 5,
+          "p50_ms": 1400.5166459974134,
+          "p95_ms": 1506.0979400004726,
+          "min_ms": 1331.2458340005833,
+          "max_ms": 1518.7766490016656,
+          "rps": 0.7146940523587183,
+          "wall_s": 27.98400229300023,
+          "cpu_core_equivalents": 3.677100899385605,
+          "resources_after": {
+            "rss_mib": 962.34375,
+            "hwm_mib": 962.34375,
+            "threads": 12,
+            "cpu_s": 306.78
+          },
+          "usage": {
+            "input_tokens": 1047,
+            "output_tokens": 0
+          },
+          "errors": 0,
+          "payload": {
+            "state": "I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. I was charged twice. ",
+            "questions": {
+              "billing": {
+                "type": "noul",
+                "instructions": "Is this about billing?"
+              },
+              "route": {
+                "type": "choice",
+                "instructions": "Choose a support route.",
+                "criteria": {
+                  "billing": "Billing support",
+                  "technical": "Technical support"
+                }
+              },
+              "urgency": {
+                "type": "score",
+                "instructions": "How urgent is this request?",
+                "criteria": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "model": "laya-multilingual"
+          },
+          "latencies_ms": [
+            1331.2458340005833,
+            1333.3902450031019,
+            1335.9971390018472,
+            1343.9429760001076,
+            1346.7807970009744,
+            1353.631376001431,
+            1357.0874520009966,
+            1361.5851270005805,
+            1393.1970730009198,
+            1400.5166459974134,
+            1402.6129269986995,
+            1405.1457870009472,
+            1405.4007859995181,
+            1414.8672069968597,
+            1430.2943820002838,
+            1433.0563340008666,
+            1442.151606999687,
+            1457.503175999591,
+            1506.0979400004726,
+            1518.7766490016656
+          ]
+        }
+      ],
+      "initial_thread_affinity": {
+        "158242": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158243": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158244": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158245": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158246": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158247": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158248": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158249": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158250": [
+          1
+        ],
+        "158251": [
+          2
+        ],
+        "158252": [
+          3
+        ]
+      },
+      "forced_thread_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "final_thread_affinity": {
+        "158242": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158243": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158244": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158245": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158246": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158247": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158248": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158249": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158250": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158251": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158252": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "158261": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "final": {
+        "rss_mib": 962.34375,
+        "hwm_mib": 962.34375,
+        "threads": 12,
+        "cpu_s": 306.78
+      }
+    }
+  ],
+  "excluded_attempts": "Two initial CPU scaling attempts with only launch-time taskset were discarded because native workers escaped the initial affinity and consumed ~3.7 CPU equivalents. Their results are not treated as restricted CPU measurements.",
+  "bundle_manifest_sha256": "8bb17bb849878bef78ba4f645957bf412d8245462966c7c88a47b29f9faa493b"
+}
